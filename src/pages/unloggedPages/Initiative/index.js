@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import styled from "styled-components"
+import ParticipantsBox from "../../../components/ParticipantsBox"
 
 export default function UnloggedInitiative() {
     const [round, setRound] = useState(0)
@@ -7,7 +8,6 @@ export default function UnloggedInitiative() {
     const [enemyData, setEnemyData] = useState([])
     const [allCharacters, setAllCharacters] = useState([])
     const [name, setName] = useState('')
-    const [classs, setClasss] = useState('')
     const [modifier, setModifier] = useState(0)
 
     function submit(ally) {
@@ -19,10 +19,6 @@ export default function UnloggedInitiative() {
     }
 
     console.log(modifier)
-
-    function modifyClasss(e) {
-        setClasss(e.target.value)
-    }
 
     function modifyName(e) {
         setName(e.target.value)
@@ -57,23 +53,28 @@ export default function UnloggedInitiative() {
                 <div><p>CALCULADORA DE COMBATE</p></div>
             </Header>
 
-            {!round ? <NotStarted>
-                <ParticipantsBox></ParticipantsBox>
-                <AddParticipants>
-                    <FormBox>
-                        <p>Name</p>
-                        <input type={"text"} onChange={(e) => modifyName(e)}></input>
-                        <p>Class</p>
-                        <input placeholder="Campo opcional" onChange={(e) => modifyClasss(e)}></input>
-                        <p>Modifier</p>
-                        <input type="Number" value={modifier} onChange={(e) => modifyValue(e)} />
-                    </FormBox>
-                    <AllyOrEnemy>
-                        <ConfirmButton ally={true} onClick={() => addCharacter('true', { name, classs, modifier })}><p>ALIADO</p></ConfirmButton>
+            {!round ?
+                <NotStarted>
+                    <ParticipantsConteiner>
+                        {allCharacters.map((item) => (
+                            <ParticipantsBox key={item.id} data={item} />
+                        ))}
+                    </ParticipantsConteiner>
+                    <AddParticipants>
+                        <FormBox>
+                            <p>Name</p>
+                            <input type={"text"} onChange={(e) => modifyName(e)}></input>
+                            <p>Modifier</p>
+                            <input type="Number" value={modifier} onChange={(e) => modifyValue(e)} />
+                        </FormBox>
+                        <AllyOrEnemy>
+                            <ConfirmButton ally={true} onClick={() => addCharacter('true', { name, modifier })}><p>ALIADO</p></ConfirmButton>
 
-                        <ConfirmButton ally={false} onClick={() => addCharacter(false, { name, classs, modifier })}><p>INIMIGO</p></ConfirmButton>
-                    </AllyOrEnemy></AddParticipants>
-            </NotStarted> : <StartedRound></StartedRound>}
+                            <ConfirmButton ally={false} onClick={() => addCharacter(false, { name, modifier })}><p>INIMIGO</p></ConfirmButton>
+                        </AllyOrEnemy></AddParticipants>
+                </NotStarted> :
+                <StartedRound>
+                </StartedRound>}
         </Body>
     )
 }
@@ -115,13 +116,13 @@ const FormBox = styled.div`
     flex-direction: column;
 `
 
-const ParticipantsBox = styled.div`
-    width: 30%;
+const ParticipantsConteiner = styled.div`
+    width: 31%;
     height: 300px;
 
-    background-color: #fff;
-
     margin-right: 40px;
+
+    overflow-y: auto;
 `
 
 const Form = styled.div`
@@ -164,13 +165,6 @@ const StartedRound = styled.div`
     height: 500px;
 
     background-color: lightgreen;
-`
-
-const SideBar = styled.div`
-    width: 20%;
-    height: 100%;
-
-    background-color: grey;
 `
 
 const Body = styled.div`
